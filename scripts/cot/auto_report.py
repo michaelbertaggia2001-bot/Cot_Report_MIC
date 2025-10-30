@@ -1,12 +1,41 @@
+# -*- coding: utf-8 -*-
 """Report automatico COT per Team Command Cursor."""
 import sys
 from pathlib import Path
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
 
+# Fix encoding UTF-8 per Windows
+from shared.encoding_fix import setup_utf8_encoding
+setup_utf8_encoding()
+
 import duckdb
 from shared.config import COT_DUCKDB_PATH
+
+
+def safe_print(*args, **kwargs):
+    """Print sicuro che forza UTF-8 encoding anche su terminali Windows problematici."""
+    try:
+        # Converte argomenti in stringa
+        text = ' '.join(str(arg) for arg in args)
+        if kwargs.get('end', '\n') != '':
+            text += kwargs.get('end', '\n')
+        
+        # Scrive direttamente nel buffer con encoding UTF-8 esplicito
+        if hasattr(sys.stdout, 'buffer'):
+            sys.stdout.buffer.write(text.encode('utf-8', errors='replace'))
+            sys.stdout.buffer.flush()
+        else:
+            # Fallback se buffer non disponibile
+            print(*args, **kwargs)
+    except Exception:
+        # Fallback: usa print normale
+        try:
+            print(*args, **kwargs)
+        except Exception:
+            pass  # Ignora errori di encoding estremi
 
 # Mapping strumenti -> market codes COT
 INSTRUMENTS = {
@@ -108,7 +137,7 @@ def generate_report():
         # Trova ultima data
         latest_date = get_latest_date(con)
         if not latest_date:
-            print("No data available")
+            safe_print("No data available")
             return
         
         # Trova market codes mancanti
@@ -125,7 +154,7 @@ def generate_report():
             else:
                 instruments_map[name] = code_info[0]
         
-        print(f"{latest_date} (ultimo report disponibile)\n")
+        safe_print(f"{latest_date} (ultimo report disponibile)\n")
         
         # Query per ogni strumento
         results = {}
@@ -136,4 +165,31 @@ def generate_report():
                     # Format bias description
                     if abs(data["bias_open"]) > 50000:
                         bias_desc = f"(forte {'long' if data['bias_open'] > 0 else 'short'})"
-                    elif abs(data["bias_open"]) Truncated file content, reached max length of 70000 characters
+                    elif abs(data["bias_open"]) > 10000:
+                        bias_desc = f"(strong {'long' if data['bias_open'] > 0 else 'short'})"
+                    else:
+                        bias_desc = "(allineato)"
+                    
+                    # Format output
+                    delta_sign = "+" if data["delta_week"] >= 0 else ""
+                    bias_sign = "+" if data["bias_open"] >= 0 else ""
+                    
+                    delta_long_str = f"+{data['delta_long']}" if data['delta_long'] >= 0 else str(data['delta_long'])
+                    delta_short_str = f"+{data['delta_short']}" if data['delta_short'] >= 0 else str(data['delta_short'])
+                    
+                    safe_print(f"{name}: DELTA settimana {delta_sign}{data['delta_week']:,} "
+                          f"(Long: {delta_long_str}, Short: {delta_short_str}); "
+                          f"BIAS aperto {bias_sign}{data['bias_open']:,} "
+                          f"(Long: {data['long_total']:,}, Short: {data['short_total']:,}) {bias_desc}")
+                    
+                    results[name] = data
+                else:
+                    results[name] = None
+        
+        return results
+    finally:
+        con.close()
+
+
+if __name__ == "__main__":
+    generate_report()

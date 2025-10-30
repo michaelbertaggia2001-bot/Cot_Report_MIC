@@ -4,6 +4,7 @@ Legacy format: Noncommercial (Large Speculators) + Commercial positions
 as shown in the screenshot from Tradingster (market code 090741 - Canadian Dollar).
 """
 
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import argparse
@@ -18,6 +19,10 @@ if __package__ is None or __package__ == "":
     REPO_ROOT = Path(__file__).resolve().parents[2]
     if str(REPO_ROOT) not in sys.path:
         sys.path.append(str(REPO_ROOT))
+
+# Fix encoding UTF-8 per Windows
+from shared.encoding_fix import setup_utf8_encoding
+setup_utf8_encoding()
 
 from shared.config import COT_PARQUET_DIR, COT_RAW_DIR, ensure_directories
 

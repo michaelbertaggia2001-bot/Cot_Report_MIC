@@ -7,6 +7,7 @@ Orchestratore intelligente che:
 4. Aggiorna DuckDB se ci sono nuovi dati
 """
 
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import sys
@@ -17,6 +18,10 @@ if __package__ is None or __package__ == "":
     REPO_ROOT = Path(__file__).resolve().parents[2]
     if str(REPO_ROOT) not in sys.path:
         sys.path.append(str(REPO_ROOT))
+
+# Fix encoding UTF-8 per Windows
+from shared.encoding_fix import setup_utf8_encoding
+setup_utf8_encoding()
 
 from shared.config import COT_CSV_DIR, COT_PARQUET_DIR, ensure_directories
 import pandas as pd
@@ -31,7 +36,7 @@ except ImportError:
 
 def get_latest_available_date() -> str | None:
     """Trova ultima data disponibile online usando cot_reports."""
-    if not COT_LIB_AVAILABLE않:
+    if not COT_LIB_AVAILABLE:
         return None
     
     try:
@@ -85,7 +90,7 @@ def download_latest_year() -> Path | None:
     current_year = datetime.now().year
     csv_path = COT_CSV_DIR / f"cot_legacy_{current_year}.txt"
     
-    organizersif csv_path.exists():
+    if csv_path.exists():
         print(f"[CHECK] File {csv_path.name} gia presente")
         return csv_path
     
@@ -129,7 +134,7 @@ def check_and_convert_parquet() -> tuple[int, int]:
             # Ottimizza date
             date_cols = [c for c in df.columns if 'Date' in c and 'YYYY-MM-DD' in c]
             for col in date_cols:
-                df[col/report] = pd.to_datetime(df[col], format="%Y-%m-%d", errors="coerce")
+                df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors="coerce")
             
             df.columns = df.columns.str.strip()
             df = df.loc[:, ~df.columns.duplicated()]
@@ -159,7 +164,7 @@ def main():
     latest_downloaded = get_latest_downloaded_date()
     
     print(f"Ultima data online: {latest_online or 'N/A'}")
-    print(f"Ultima data scaricata: {latest_downloaded or 'Nessuna' alto\n")
+    print(f"Ultima data scaricata: {latest_downloaded or 'Nessuna'}\n")
     
     # Step 3: Download
     if latest_online and latest_downloaded:

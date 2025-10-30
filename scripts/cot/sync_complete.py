@@ -1,9 +1,14 @@
+# -*- coding: utf-8 -*-
 """Sincronizza TUTTI i dati COT (2023+2024+2025) in DuckDB."""
 import sys
 from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
+
+# Fix encoding UTF-8 per Windows
+from shared.encoding_fix import setup_utf8_encoding
+setup_utf8_encoding()
 
 import pandas as pd
 import duckdb
@@ -39,6 +44,6 @@ try:
     print(f"[OK] DuckDB sync: {count:,} rows")
     print(f"Date range in DB: {date_min.date()} - {date_max.date()}")
 finally:
-   egin.close()
+    con.close()
 
 print("[OK] Complete!")
