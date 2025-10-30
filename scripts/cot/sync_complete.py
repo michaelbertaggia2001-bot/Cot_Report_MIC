@@ -13,6 +13,7 @@ setup_utf8_encoding()
 import pandas as pd
 import duckdb
 from shared.config import COT_PARQUET_DIR, COT_DUCKDB_PATH
+from shared.encoding_utils import format_number_ascii
 
 # Mapping colonne per normalizzazione
 LEGACY_COLUMN_MAP = {
@@ -64,7 +65,7 @@ for parquet_file in parquet_files:
         df = pd.read_parquet(parquet_file)
         df = normalize_columns_if_needed(df)
         dfs.append(df)
-        print(f"  -> {len(df):,} righe caricate")
+        print(f"  -> {format_number_ascii(len(df))} righe caricate")
     except Exception as e:
         print(f"  -> [ERROR] Impossibile caricare {parquet_file.name}: {e}")
 
@@ -75,7 +76,7 @@ if not dfs:
 # Concatenate all
 df_all = pd.concat(dfs, ignore_index=True)
 
-print(f"\nTOTAL: {len(df_all):,} rows")
+print(f"\nTOTAL: {format_number_ascii(len(df_all))} rows")
 print(f"Date range: {df_all['report_date'].min().date()} - {df_all['report_date'].max().date()}")
 
 # Sync to DuckDB
@@ -87,7 +88,7 @@ try:
     count = con.execute("SELECT COUNT(*) FROM cot_disagg").fetchone()[0]
     date_min, date_max = con.execute("SELECT MIN(report_date), MAX(report_date) FROM cot_disagg").fetchone()
     
-    print(f"[OK] DuckDB sync: {count:,} rows")
+    print(f"[OK] DuckDB sync: {format_number_ascii(count)} rows")
     print(f"Date range in DB: {date_min.date()} - {date_max.date()}")
 finally:
     con.close()

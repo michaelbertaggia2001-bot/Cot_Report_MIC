@@ -25,6 +25,7 @@ from shared.encoding_fix import setup_utf8_encoding
 setup_utf8_encoding()
 
 from shared.config import COT_CSV_DIR, COT_PARQUET_DIR, ensure_directories
+from shared.encoding_utils import format_number_ascii
 import pandas as pd
 
 LOGGER = logging.getLogger("cot.converter")
@@ -46,7 +47,7 @@ def csv_to_parquet(csv_path: Path, parquet_path: Path) -> Path:
     parquet_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(parquet_path, index=False)
     
-    LOGGER.info(f"Converted {csv_path.name} to {parquet_path.name} ({len(df):,} rows)")
+    LOGGER.info(f"Converted {csv_path.name} to {parquet_path.name} ({format_number_ascii(len(df))} rows)")
     return parquet_path
 
 

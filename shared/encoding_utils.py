@@ -65,6 +65,43 @@ def _setup_utf8_encoding_fallback() -> None:
             pass  # Fallback silenzioso se non possibile
 
 
+def format_number_ascii(num: int | float) -> str:
+    """Formatta un numero con separatori delle migliaia ASCII puri (virgola).
+    
+    Evita problemi di locale su Windows che possono inserire caratteri non-ASCII.
+    
+    Args:
+        num: Numero da formattare
+        
+    Returns:
+        Stringa con numero formattato usando solo ASCII (es: "12,345")
+    
+    Examples:
+        >>> format_number_ascii(1234)
+        '1,234'
+        >>> format_number_ascii(-12345678)
+        '-12,345,678'
+    """
+    if isinstance(num, float):
+        num = int(num)
+    
+    # Gestione segno
+    sign = '-' if num < 0 else ''
+    num = abs(num)
+    
+    # Converti in stringa e aggiungi virgole manualmente
+    num_str = str(num)
+    
+    # Aggiungi virgole ogni 3 cifre da destra
+    parts = []
+    for i, digit in enumerate(reversed(num_str)):
+        if i > 0 and i % 3 == 0:
+            parts.append(',')
+        parts.append(digit)
+    
+    return sign + ''.join(reversed(parts))
+
+
 def sanitize_ascii(text: str) -> str:
     """Conserva solo ASCII stampabile, rimuovendo caratteri non ASCII.
     

@@ -24,6 +24,7 @@ from shared.encoding_fix import setup_utf8_encoding
 setup_utf8_encoding()
 
 from shared.config import COT_CSV_DIR, COT_PARQUET_DIR, ensure_directories
+from shared.encoding_utils import format_number_ascii
 import pandas as pd
 import duckdb
 
@@ -103,7 +104,7 @@ def download_latest_year() -> Path | None:
         df.to_csv(csv_path, index=False, sep="\t")
         
         date_range = df['As of Date in Form YYYY-MM-DD'].min() if 'As of Date in Form YYYY-MM-DD' in df.columns else "N/A"
-        print(f"[OK] Scaricati {len(df):,} righe, data range: {date_range}")
+        print(f"[OK] Scaricati {format_number_ascii(len(df))} righe, data range: {date_range}")
         return csv_path
     except Exception as e:
         print(f"[ERROR] Download fallito: {e}")
@@ -142,7 +143,7 @@ def check_and_convert_parquet() -> tuple[int, int]:
             parquet_path.parent.mkdir(parents=True, exist_ok=True)
             df.to_parquet(parquet_path, index=False)
             converted += 1
-            print(f"[OK] Convertito {len(df):,} righe")
+            print(f"[OK] Convertito {format_number_ascii(len(df))} righe")
         except Exception as e:
             print(f"[ERROR] Conversione {csv_file.name} fallita: {e}")
     

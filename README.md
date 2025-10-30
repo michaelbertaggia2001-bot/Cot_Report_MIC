@@ -138,6 +138,16 @@ python scripts/cot/auto_report.py
 
 **Problema: Errori encoding su Windows**
 - Tutti gli script gestiscono automaticamente UTF-8
+- Se vedi caratteri strani nell'output, consulta `docs/ENCODING_FIX_DOCUMENTATION.md`
+
+**Problema: Errori durante update o analisi**
+- Consulta `docs/COMMANDS_ERROR_SCENARIOS.md` per troubleshooting completo
+- Sezione include: download fallito, database bloccato, permessi insufficienti, ecc.
 
 **Problema: Database non trovato**
 - Esegui `python scripts/cot/sync_complete.py` se hai già i file Parquet
+
+## 🛠️ Documentazione Tecnica
+
+- **`docs/ENCODING_FIX_DOCUMENTATION.md`** - Fix encoding Windows e formattazione numeri (caratteri strani risolti)
+- **`docs/COMMANDS_ERROR_SCENARIOS.md`** - Scenari di errore e troubleshooting completo per comandi `/update` e `/analisi_ultima_settimana`

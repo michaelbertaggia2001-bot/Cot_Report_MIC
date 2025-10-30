@@ -8,7 +8,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
 
 # Fix encoding UTF-8 per Windows e importa utility avanzate
-from shared.encoding_utils import force_utf8_stdout, safe_print, sanitize_ascii
+from shared.encoding_utils import force_utf8_stdout, safe_print, sanitize_ascii, format_number_ascii
 force_utf8_stdout()
 
 import duckdb
@@ -178,20 +178,26 @@ def generate_report():
                     else:
                         bias_desc = "(allineato)"
                     
-                    # Format output
+                    # Format output usando format_number_ascii per evitare problemi di locale
                     delta_sign = "+" if data["delta_week"] >= 0 else ""
                     bias_sign = "+" if data["bias_open"] >= 0 else ""
                     
                     delta_long_str = f"+{data['delta_long']}" if data['delta_long'] >= 0 else str(data['delta_long'])
                     delta_short_str = f"+{data['delta_short']}" if data['delta_short'] >= 0 else str(data['delta_short'])
                     
+                    # Formatta numeri con separatori ASCII puri
+                    delta_week_fmt = format_number_ascii(data['delta_week'])
+                    bias_open_fmt = format_number_ascii(data['bias_open'])
+                    long_total_fmt = format_number_ascii(data['long_total'])
+                    short_total_fmt = format_number_ascii(data['short_total'])
+                    
                     # Usa il nome originale (non sanitizzato) per il file UTF-8
                     # La sanitizzazione avviene solo per la console
                     line = (
-                        f"{name}: DELTA settimana {delta_sign}{data['delta_week']:,} "
+                        f"{name}: DELTA settimana {delta_sign}{delta_week_fmt} "
                         f"(Long: {delta_long_str}, Short: {delta_short_str}); "
-                        f"BIAS aperto {bias_sign}{data['bias_open']:,} "
-                        f"(Long: {data['long_total']:,}, Short: {data['short_total']:,}) {bias_desc}"
+                        f"BIAS aperto {bias_sign}{bias_open_fmt} "
+                        f"(Long: {long_total_fmt}, Short: {short_total_fmt}) {bias_desc}"
                     )
                     
                     # Stampa in console (ASCII) e scrivi in file (UTF-8 originale)
