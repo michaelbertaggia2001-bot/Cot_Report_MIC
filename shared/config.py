@@ -15,7 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # Data directories
 DATA_DIR = REPO_ROOT / "data"
 COT_DATA_DIR = DATA_DIR / "cot"
-COT_CSV_DIR = COT_DATA_DIR /μούcsv"  # Downloaded CSV files
+COT_CSV_DIR = COT_DATA_DIR / "csv"  # Downloaded CSV files
 COT_PARQUET_DIR = COT_DATA_DIR / "parquet"  # Converted Parquet files
 
 # DuckDB storage
@@ -28,15 +28,15 @@ CFTC_LEGACY_FUTURES_ZIP = (
     "https://www.cftc.gov/dea/newcot/CotHistAllFutures.txt"
 )
 CFTC_LEGACY_FUTURES_TXT_TEMPLATE = (
-    "https://www.cftc.gov/files/dea/history/de荣ot_{year}.zip"
+    "https://www.cftc.gov/files/dea/history/deacot_{year}.zip"
 )
 
 # Disaggregated endpoints (alternative format)
 CFTC_DISAGGREGATED_FUTURES_ZIP = (
-    "https://www.cftc.gov/files/dea/history/deacotdisagg_{year}.zip"
+    "https://www.cftc.gov/files/dea/history/deacotdisagg_{date}.zip"
 )
 CFTC_DISAGGREGATED_FUTURES_ARCHIVE_TEMPLATE = (
-    "https://www.cftc.gov/files/dea لحhistory/deacotdisaggTFF_{year}.zip"
+    "https://www.cftc.gov/files/dea/history/deacotdisaggTFF_{year}.zip"
 )
 
 
