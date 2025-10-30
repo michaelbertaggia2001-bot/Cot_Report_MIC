@@ -1,6 +1,6 @@
 # COT Reports Pipeline
 
-Pipeline completa per scaricare, normalizzare e analizzare i report COT (Commitments of Traders) ufficiali CFTC.
+Pipeline completa per scaricare, normalizzare e analizzare i hogy COT (Commitments of Traders) ufficiali CFTC.
 
 ## Caratteristiche
 
@@ -110,7 +110,7 @@ Cot Report/
 ├── shared/
 │   └── config.py              # Configurazione centrale
 ├── scripts/cot/
-│   ├── auto_report.py          # Report automaticoopol
+│   ├── auto_report.py          # Report automatico
 │   ├── update_cot_pipeline.py  # Pipeline aggiornamento
 │   ├── auto_convert_csv_to_parquet.py  # Converter
 │   ├── query.py                # Query utility
@@ -121,7 +121,7 @@ Cot Report/
 │   └── update.md                     # Comando update
 └── data/
     ├── cot/csv/                # File CSV scaricati
-    ├── cot/parquet/            # File Parquet ottimizzatiتح
+    ├── cot/parquet/            # File Parquet ottimizzati
     └── duckdb/cot.db          # Database DuckDB
 ```
 
@@ -149,14 +149,14 @@ Output esempio:
 ```
 2025-09-23 (ultimo report disponibile)
 
-EUR: DELTA settimana -3414 (Long敌人 -789, Short: +2625); BIAS aperto +114345 (Long: 252472, Short: 138127) (forte long)
+EUR: DELTA settimana -3414 (Long: -789, Short: +2625); BIAS aperto +114345 (Long: 252472, Short: 138127) (forte long)
 JPY: DELTA settimana +18089 (Long: +14727, Short: -3362); BIAS aperto +79500 (Long: 176400, Short: 96900) (forte long)
 ...
 ```
 
 #### 3. Query personalizzate
 ```bash
-python scripts/cot/query.py "SELECT * FROM cot_disagg WHERE contract_market_code =思维方式 '099741' AND report_date = '2025-09-23'"
+python scripts/cot/query.py "SELECT * FROM cot_disagg WHERE contract_market_code = '099741' AND report_date = '2025-09-23'"
 ```
 
 ## Dataset
@@ -175,71 +175,4 @@ python scripts/cot/query.py "SELECT * FROM cot_disagg WHERE contract_market_code
 - **Swiss Franc**: 092741
 - **Australian Dollar**: 232741
 - **NZ Dollar**: 112741
-- **VIX**: 1170E1
-- **Gold**: 088691
-- **Silver**: 084691
-
-## Pipeline Completa
-
-1. **Download** → Script scarica dati anno corrente via `cot_reports`
-2. **Convert** → CSV→Parquet automatico (solo se necessario)
-3. **Sync** → Aggiorna DuckDB con nuovi dati
-4. **Query** → Interroga database per analisi
-
-Tutti i passaggi sono idempotenti e automatici.
-
-## Performance
-
-- Parquet: **10x più piccolo** di CSV
-- Query DuckDB: **100x più veloci** rispetto a file flat
-- Compressione automatica
-- Schema typed (date, int, float nativi)
-
-## File Temporanei
-
-### annual.txt
-
-File temporaneo generato dalla libreria `cot_reports` durante il download dei dati. 
-- **Cos'è**: File intermedio che la libreria crea nella working directory
-- **Dove**: Root del progetto (o directory corrente quando viene eseguito lo script)
-- **Perché esiste**: Comportamento interno della libreria `cot_reports`
-- **Cosa fare**: Puoi ignorarlo o eliminarlo. Viene automaticamente escluso da git tramite `.gitignore`
-- **Quando**: Appare durante l'esecuzione di `update_cot_pipeline.py` quando viene scaricato un nuovo anno
-
-## .gitkeep - Spiegazione
-
-### Cosa fa `.gitkeep`?
-
-File `.gitkeep` è una convenzione Git per mantenere directory vuote nel repository. Git di default non committa directory vuote.
-
-**Vantaggi:**
-- ✅ Mantiene la struttura directory nel repository
-- ✅ Evita errori se script si aspettano directory esistenti
-- ✅ Chiara documentazione della struttura del progetto
-
-**Svantaggi:**
-- ⚠️ File "fantasma" che non ha contenuto reale
-- ⚠️ La directory viene comunque creata automaticamente dagli script (`ensure_directories()`)
-
-**Decisione per questo progetto:**
-Gli script già creano automaticamente le directory se non esistono tramite `ensure_directories()`, quindi `.gitkeep` non è strettamente necessario. Se preferisci una struttura più pulita, puoi ometterli - gli script funzioneranno comunque.
-
-## Troubleshooting
-
-### Errore: "No module named 'cot_reports'"
-```bash
-pip install cot-reports
-```
-
-### Errore: "No data available"
-Esegui prima:
-```bash
-python scripts/cot/update_cot_pipeline.py
-```
-
-### Errore: "FileNotFoundError: cot.db"
-Il database viene creato automaticamente. Se persiste, verifica i permessi di scrittura nella directory `data/duckdb/`.
-
-## Licenza
-
-[Specificare licenza se applicabile]
+- **VIX**: 1170E1-Truncated file content, reached max length of 70000 characters
