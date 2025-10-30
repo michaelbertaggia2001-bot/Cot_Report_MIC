@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Data files (non committare dati)
+data/cot/csv/*
+data/cot/parquet/*
+data/duckdb/*.db
+data/duckdb/*.db.wal
+
+# Keep directory structure (these files are committed)
+!data/cot/csv/.gitkeep
+!data/cot/parquet/.gitkeep
+!data/duckdb/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+annual.txt
