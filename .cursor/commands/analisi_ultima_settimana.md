@@ -47,4 +47,3 @@ GOLD: DELTA settimana +1,851 (Long: +339, Short: -1,512); BIAS aperto +4,248 (Lo
 - Periodo: 2023-2025 (ultimi ~3 anni)
 
 **Nota tecnica:** Lo script cerca automaticamente i market codes COT se non mappati esplicitamente, quindi funziona anche se la struttura dati cambia leggermente.
-
