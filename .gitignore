@@ -9,7 +9,7 @@ venv/
 ENV/
 
 # Data files (non committare dati)
-nera/cot/csv/*
+data/cot/csv/*
 data/cot/parquet/*
 data/duckdb/*.db
 data/duckdb/*.db.wal
