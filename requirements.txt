@@ -1,0 +1,13 @@
+# COT Reports Pipeline - Dependencies
+# Python 3.8+ required
+
+# Core dependencies (required)
+cot-reports>=1.0.0
+pandas>=2.0.0
+duckdb>=0.9.0
+pyarrow>=14.0.0
+
+# Optional dependencies
+# Uncomment if you want clipboard functionality in encoding_utils
+# pyperclip>=1.8.0
+

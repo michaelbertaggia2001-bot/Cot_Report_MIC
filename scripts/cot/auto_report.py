@@ -7,12 +7,16 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
 
-# Fix encoding UTF-8 per Windows
-from shared.encoding_fix import setup_utf8_encoding
-setup_utf8_encoding()
+# Fix encoding UTF-8 per Windows e importa utility avanzate
+from shared.encoding_utils import force_utf8_stdout, safe_print, sanitize_ascii
+force_utf8_stdout()
 
 import duckdb
 from shared.config import COT_DUCKDB_PATH
+
+# Path per salvare report in file UTF-8 (per copia/incolla affidabile)
+REPORTS_DIR = REPO_ROOT / "data" / "reports"
+REPORT_UTF8_FILE = REPORTS_DIR / "cot_report_utf8.txt"
 
 # Mapping strumenti -> market codes COT
 INSTRUMENTS = {
@@ -125,16 +129,20 @@ def get_instrument_data(con: duckdb.DuckDBPyConnection, code: str, date: str):
 
 def generate_report():
     """Genera report completo."""
+    # Pulisci file report precedente (overwrite mode)
+    if REPORT_UTF8_FILE.exists():
+        REPORT_UTF8_FILE.unlink()
+    
     con = duckdb.connect(str(COT_DUCKDB_PATH))
     
     try:
         # Trova ultima data
         latest_date = get_latest_date(con)
         if not latest_date:
-            print("No data available")
+            safe_print("No data available", ascii_only=True)
             return
         
-        # Trova market codes mancanti
+        # Trova market codes manc.canti
         found_codes = find_market_codes(con)
         
         # Completa mapping
@@ -148,7 +156,13 @@ def generate_report():
             else:
                 instruments_map[name] = code_info[0]
         
-        print(f"{latest_date} (ultimo report disponibile)\n")
+        # Header report
+        header_line = f"{latest_date} (ultimo report disponibile)\n"
+        safe_print(
+            header_line,
+            ascii_only=True,
+            tee_file_utf8=str(REPORT_UTF8_FILE)
+        )
         
         # Query per ogni strumento
         results = {}
@@ -171,10 +185,21 @@ def generate_report():
                     delta_long_str = f"+{data['delta_long']}" if data['delta_long'] >= 0 else str(data['delta_long'])
                     delta_short_str = f"+{data['delta_short']}" if data['delta_short'] >= 0 else str(data['delta_short'])
                     
-                    print(f"{name}: DELTA settimana {delta_sign}{data['delta_week']:,} "
-                          f"(Long: {delta_long_str}, Short: {delta_short_str}); "
-                          f"BIAS aperto {bias_sign}{data['bias_open']:,} "
-                          f"(Long: {data['long_total']:,}, Short: {data['short_total']:,}) {bias_desc}")
+                    # Usa il nome originale (non sanitizzato) per il file UTF-8
+                    # La sanitizzazione avviene solo per la console
+                    line = (
+                        f"{name}: DELTA settimana {delta_sign}{data['delta_week']:,} "
+                        f"(Long: {delta_long_str}, Short: {delta_short_str}); "
+                        f"BIAS aperto {bias_sign}{data['bias_open']:,} "
+                        f"(Long: {data['long_total']:,}, Short: {data['short_total']:,}) {bias_desc}"
+                    )
+                    
+                    # Stampa in console (ASCII) e scrivi in file (UTF-8 originale)
+                    safe_print(
+                        line,
+                        ascii_only=True,  # Console ASCII pulita
+                        tee_file_utf8=str(REPORT_UTF8_FILE)  # File UTF-8 per copia/incolla
+                    )
                     
                     results[name] = data
                 else:

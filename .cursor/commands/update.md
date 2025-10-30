@@ -6,35 +6,44 @@ Esegui automaticamente lo script `scripts/cot/update_cot_pipeline.py` per scaric
 1. Verifica ultima data disponibile online vs ultima data scaricata
 2. Scarica nuovi report COT se disponibili (solo se necessario)
 3. Converte CSV->Parquet per i nuovi file scaricati
-4. Fornisce summary delle operazioni
+4. Sincronizza tutti i file Parquet nel database DuckDB (crea/aggiorna tabella cot_disagg)
+5. Fornisce summary delle operazioni
 
 **Cosa fare (in ordine):**
-1. Identifica il percorso workspace root: `C:\Users\a566269\Desktop\Cot_Report_MIC`
-2. **IMPORTANTE - Gestione directory:**
+1. **IMPORTANTE - Installa dipendenze (se non già fatto):**
+   ```bash
+   pip install -r requirements.txt
+   ```
+   Se non hai ancora installato le dipendenze, questo è il primo passo obbligatorio.
+
+2. Identifica il percorso workspace root: `C:\Users\a566269\Desktop\Cot_Report_MIC`
+3. **IMPORTANTE - Gestione directory:**
    - Se già nella directory corretta, esegui direttamente il comando Python
    - Se serve cambiare directory, fallo in un comando separato PRIMA
    
-3. Esegui il comando Python in modo diretto:
+4. Esegui i comandi Python in sequenza:
    ```bash
    python scripts/cot/update_cot_pipeline.py
+   python scripts/cot/sync_complete.py
    ```
    
    **❌ ERRORI COMUNI DA EVITARE (NON FUNZIONANO IN POWERSHELL):**
-   - ❌ `cd "C:\Users\a566269\Desktop\Cot_Report_MIC" && python scripts/cot/update_cot_pipeline.py`
+   - ❌ `cd "C:\Users\a566269\Desktop\Cot_Report_MIC" && python scripts/cot/update_cot_pipeline.py && python scripts/cot/sync_complete.py`
    - ❌ Qualsiasi comando concatenato con `&&` (PowerShell NON supporta `&&`)
    - ❌ Comandi su più righe con `&&`
    
    **✅ FORMA CORRETTA:**
-   - ✅ Se nella directory: `python scripts/cot/update_cot_pipeline.py`
+   - ✅ Se nella directory: esegui i due comandi separatamente
    - ✅ Se serve cambiare directory:
      ```bash
      cd "C:\Users\a566269\Desktop\Cot_Report_MIC"
      python scripts/cot/update_cot_pipeline.py
+     python scripts/cot/sync_complete.py
      ```
    - ✅ Usa SEMPRE comandi separati, NON concatenati con `&&`
 
-4. Mostra TUTTO l'output generato esattamente come appare, senza modifiche o analisi aggiuntive
-5. Se ci sono errori, mostra il messaggio di errore completo
+5. Mostra TUTTO l'output generato da entrambi gli script esattamente come appare, senza modifiche o analisi aggiuntive
+6. Se ci sono errori, mostra il messaggio di errore completo
 
 **IMPORTANTE:**
 - NON aggiungere osservazioni, interpretazioni o analisi personali
@@ -48,6 +57,13 @@ Esegui automaticamente lo script `scripts/cot/update_cot_pipeline.py` per scaric
 ```
 [OK] Gia scaricati i piu recenti COT report
 [OK] Verifica parquet eseguita senza integrazioni
+Loading 2025...
+  -> X righe caricate
+TOTAL: X rows
+Date range: YYYY-MM-DD - YYYY-MM-DD
+[OK] DuckDB sync: X rows
+Date range in DB: YYYY-MM-DD - YYYY-MM-DD
+[OK] Complete!
 ```
 
 **Se ci sono nuovi dati:**
@@ -56,9 +72,17 @@ Esegui automaticamente lo script `scripts/cot/update_cot_pipeline.py` per scaric
 [OK] Scaricati X righe
 [CONVERT] cot_legacy_2025.txt -> legacy_futures_2025.parquet
 [OK] Convertiti X file(s) in Parquet
+Loading 2025...
+  -> X righe caricate
+TOTAL: X rows
+Date range: YYYY-MM-DD - YYYY-MM-DD
+[OK] DuckDB sync: X rows
+Date range in DB: YYYY-MM-DD - YYYY-MM-DD
+[OK] Complete!
 ```
 
 **Dipendenze:**
-- Libreria `cot_reports` installata: `pip install cot-reports`
-- Se non installata, lo script indicherà l'errore
+- Tutte le dipendenze devono essere installate: `pip install -r requirements.txt`
+- Se non installate, lo script indicherà l'errore
+- File `requirements.txt` contiene: `cot-reports`, `pandas`, `duckdb`, `pyarrow`
 

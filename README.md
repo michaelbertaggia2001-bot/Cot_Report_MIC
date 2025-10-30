@@ -8,7 +8,7 @@ Pipeline completa per scaricare, normalizzare e analizzare i report COT (Commitm
 
 ```bash
 # 1. Installa dipendenze
-pip install cot-reports pandas duckdb pyarrow
+pip install -r requirements.txt
 
 # 2. Scarica i dati (prima volta - scarica 2023-2025)
 python scripts/cot/update_cot_pipeline.py
@@ -40,7 +40,11 @@ Usa i comandi integrati:
 ## 📋 Requisiti
 
 - Python 3.8+
-- Dipendenze: `cot-reports`, `pandas`, `duckdb`, `pyarrow`
+- Dipendenze: Installare con `pip install -r requirements.txt`
+  - `cot-reports` - Download dati COT dalla CFTC
+  - `pandas` - Manipolazione dati
+  - `duckdb` - Database SQL per query
+  - `pyarrow` - Supporto formato Parquet
 
 ## 🔧 Script Disponibili
 
@@ -55,7 +59,8 @@ Usa i comandi integrati:
 data/
 ├── cot/csv/          # File CSV scaricati (ignorati da git)
 ├── cot/parquet/      # File Parquet ottimizzati (ignorati da git)
-└── duckdb/cot.db     # Database DuckDB (ignorato da git)
+├── duckdb/cot.db     # Database DuckDB (ignorato da git)
+└── reports/          # Report generati (UTF-8 per copia/incolla)
 ```
 
 **Nota:** I dati (CSV, Parquet, DB) NON sono nel repository per limitare la dimensione. Ogni utente scarica solo i dati necessari.
@@ -117,7 +122,7 @@ git clone https://github.com/michaelbertaggia2001-bot/Cot_Report_MIC.git
 cd Cot_Report_MIC
 
 # 2. Installa dipendenze
-pip install cot-reports pandas duckdb pyarrow
+pip install -r requirements.txt
 
 # 3. Scarica dati (prima volta)
 python scripts/cot/update_cot_pipeline.py
