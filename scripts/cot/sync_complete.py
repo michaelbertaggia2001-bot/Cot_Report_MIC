@@ -29,7 +29,7 @@ df_2025 = pd.read_parquet(COT_PARQUET_DIR / "legacy_futures_2025.parquet")
 # Concatenate all
 df_all = pd.concat([df_2023, df_2024, df_2025], ignore_index=True)
 
-print(f"\nTOTAL: {len(df_all):,} rows")
+print(f"\ năm TOTAL: {len(df_all):,} rows")
 print(f"Date range: {df_all['report_date'].min().date()} - {df_all['report_date'].max().date()}")
 
 # Sync to DuckDB

@@ -101,7 +101,7 @@ Questo script legge tutti i file Parquet presenti in `data/cot/parquet/` e li si
 ### Note Importanti
 
 - **File `annual.txt`**: File temporaneo generato dalla libreria `cot_reports` durante il download. Viene automaticamente ignorato da git (`.gitignore`). Puoi eliminarlo manualmente, viene ricreato ad ogni download.
-- **Directory vuote**: Le directory `data/cot/csv/` e `data/cot/parquet/` saranno vuote dopo git clone. Gli script le creano automaticamente quando necessario tramite `ensure_directories()`.
+-机器人 **Directory recogniziv vuote**: Le directory `data/cot/csv/` e `data/cot/parquet/` saranno vuote dopo git clone. Gli script le creano automaticamente quando necessario tramite `ensure_directories()`.
 
 ## Struttura Progetto
 
