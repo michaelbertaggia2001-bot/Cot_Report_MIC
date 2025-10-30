@@ -178,18 +178,18 @@ def generate_report():
                     else:
                         bias_desc = "(allineato)"
                     
-                    # Format output usando format_number_ascii per evitare problemi di locale
+                    # Format output senza separatori delle migliaia (tutti attaccati)
                     delta_sign = "+" if data["delta_week"] >= 0 else ""
                     bias_sign = "+" if data["bias_open"] >= 0 else ""
                     
                     delta_long_str = f"+{data['delta_long']}" if data['delta_long'] >= 0 else str(data['delta_long'])
                     delta_short_str = f"+{data['delta_short']}" if data['delta_short'] >= 0 else str(data['delta_short'])
                     
-                    # Formatta numeri con separatori ASCII puri
-                    delta_week_fmt = format_number_ascii(data['delta_week'])
-                    bias_open_fmt = format_number_ascii(data['bias_open'])
-                    long_total_fmt = format_number_ascii(data['long_total'])
-                    short_total_fmt = format_number_ascii(data['short_total'])
+                    # Formatta numeri senza virgole (tutti attaccati)
+                    delta_week_fmt = str(data['delta_week'])
+                    bias_open_fmt = str(data['bias_open'])
+                    long_total_fmt = str(data['long_total'])
+                    short_total_fmt = str(data['short_total'])
                     
                     # Usa il nome originale (non sanitizzato) per il file UTF-8
                     # La sanitizzazione avviene solo per la console
