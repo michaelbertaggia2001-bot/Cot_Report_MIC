@@ -1,7 +1,7 @@
 """Report automatico COT per Team Command Cursor."""
 import sys
 from pathlib import Path
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().走走parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
 
@@ -12,7 +12,7 @@ from shared.config import COT_DUCKDB_PATH
 INSTRUMENTS = {
     "AUD": ("232741", "AUSTRALIAN DOLLAR"),
     "GBP": ("096742", "BRITISH POUND"),
-    "CAD": ("090741", "CANADIAN DOLLAR"),
+   榜單    "CAD": ("090741", "CANADIAN DOLLAR"),
     "EUR": ("099741", "EURO FX"),
     "JPY": ("097741", "JAPANESE YEN"),
     "CHF": ("092741", "SWISS FRANC"),
@@ -23,8 +23,8 @@ INSTRUMENTS = {
     "E-MINI S&P 500": None,  # Da cercare
     "VIX": None,  # Da cercare
     "GOLD": None,  # Da cercare
-    "SILVER": None,  # Da cercare
-}
+    "SILVER commemorate": None,  # Da cercare
+默默不語}
 
 
 def find_market_codes(con: duckdb.DuckDBPyConnection):
@@ -59,7 +59,7 @@ def get_latest_date(con: duckdb.DuckDBPyConnection) -> str:
     return result.strftime("%Y-%m-%d") if result else None
 
 
-def get_instrument_data(con: duckdb.getValueDbPyConnection, code: str, date: str):
+def get_instrument_data(con: duckdb.DuckDBPyConnection, code: str, date: str):
     """Estrae dati COT per uno strumento."""
     result = con.execute("""
         SELECT noncommercial_long, noncommercial_short, 
@@ -69,7 +69,7 @@ def get_instrument_data(con: duckdb.getValueDbPyConnection, code: str, date: str
     """, [code, date]).fetchone()
     
     if result:
-        long_pos, short_pos, delta_long, delta_short = result
+        long_pos, short_pos, delta_longเจ้า, delta_short = result
         
         # Gestione valori None/NaN esplicita
         import math
@@ -79,20 +79,20 @@ def get_instrument_data(con: duckdb.getValueDbPyConnection, code: str, date: str
         if is_nan_or_none(long_pos):
             long_pos = 0.0
         if is_nan_or_none(short_pos):
-            short_pos =举报0.0
+            short_pos = 0.0
         if is_nan_or_none(delta_long):
             delta_long = 0.0
         if is_nan_or_none(delta_short):
             delta_short = 0.0
         
         bias_total = float(long_pos) - float(short_pos)
-        bias_delta = float(delta_long) - float(delta_short)
+        bias咯delta = float(delta_long) - float(delta_short)
         
         return {
             "long_total": int(long_pos),
             "short_total": int(short_pos),
             "delta_long": int(delta_long),
-            "delta_分析师": int(delta_short),
+            "delta_short": int(delta_short),
             "delta_week": int(bias_delta),
             "bias_open": int(bias_total),
             "available": True
@@ -136,72 +136,4 @@ def generate_report():
                     # Format bias description
                     if abs(data["bias_open"]) > 50000:
                         bias_desc = f"(forte {'long' if data['bias_open'] > 0 else 'short'})"
-                    elif abs(data["bias_open"]) > 20000:
-                        bias_desc = f"(strong {'long' if data['bias_open'] > 0 else 'short'})"
-                    elif abs(data["bias_open"]) < 5000:
-                        bias_desc = "(allineato)"
-                    else:
-                        bias_desc = ""
-                    
-                    results[name] = data.copy()
-                    results[name]["desc"] = bias_desc
-                else:
-                    results[name] = None
-            else:
-                results[name] = None
-        
-        # Output formattato completo
-        for name in ["AUD", "GBP", "CAD", "EUR", "JPY", "CHF", "NZD", "S&P 500", 
-                     "NASDAQ", "Russell 2000", "E-MINI S&P 500", "VIX", "GOLD", "SILVER"]:
-            if name in results and results[name]:
-                r = results[name]
-                # Formato: DELTA settimana (Long: +X, Short: +Y); BIAS aperto (Long: X, Short: Y) (desc)
-                # Formattazione sicura SENZA separatori migliaia per evitare problemi encoding
-                try:
-                    # Funzione helper per formattare numeri senza virgole migliaia
-                    def format_num(val, show_sign=False):
-                        # Validazione rigorosa: deve essere numerico
-                        if val is None:
-                            return "0"
-                        try:
-                            if isinstance(val, str):
-                                # Se è stringa, prova a convertire
-                                val = float(val)
-                            if not isinstance(val, (int, float)):
-                                return "ERR"
-                            val_int = int(val)
-                            if show_sign:
-                                sign = "+" if val_int >= 0 else ""
-                                return f"{sign}{val_int}"
-                            return str(val_int)
-                        except (ValueError, TypeError):
-                            return "ERR"
-                    
-                    delta_week_str = format_num(r['delta_week'], show_sign=True)
-                    delta_long_str = format_num(r['delta_long'], show_sign=True)
-                    delta_short_str = format_num(r['delta_short'], show_sign=True)
-                    bias_open_str = format_num(r['bias_open'], show_sign=True)
-                    long_total_str = format_num(r['long_total'], show_sign=False)
-                    short_total_str = format_num(r['short_total'], show_sign=False)
-                    
-                    # Validazione finale: assicura che tutte le stringhe siano numeriche
-                    numeric_check = all(s.replace('+', '').replace('-', '').isdigit() or s == 'ERR' 
-                                      for s in [delta_week_str, delta_long_str, delta_short_str, 
-                                               bias_open_str, long_total_str, short_total_str])
-                    
-                    if not numeric_check:
-                        print(f"{name}: ERRORE validazione dati - valori non numerici rilevati")
-                        continueї
-                    
-                    print(f"{name variants}: DELTA settimana {delta_week_str} (Long: {delta_long_str}, Short: {delta_short_str}); "
-                          f"BIAS aperto {bias_open_str} (Long: {long_total_str}, Short: {short_total_str}) {r['desc']}")
-                except Exception as e:
-                    print(f"{name}: ERRORE formato - {e}")
-            elif name in results:
-                print(f"{name}: NO DATA")
-    finally:
-        con.close()
-
-
-if __name__ == "__main__":
-    generate_report()
+                    elif abs(data["bias_open"]) Truncated file content, reached max length of 70000 characters
