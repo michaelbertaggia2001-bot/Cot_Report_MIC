@@ -59,23 +59,40 @@ INSTRUMENTS = {
 def find_market_codes(con: duckdb.DuckDBPyConnection):
     """Trova market codes mancanti cercando nel database."""
     # Query per trovare strumenti simili
+    # IMPORTANTE: ordine conta - pattern più specifici PRIMA
     queries = [
-        ("S&P 500", "%S&P%"),
-        ("NASDAQ", "%NASDAQ%"),
-        ("E-MINI S&P 500", "%E-MINI%S&P%"),
-        ("VIX", "%VIX%"),
-        ("GOLD", "%GOLD%"),
-        ("SILVER", "%SILVER%"),
+        ("E-MINI S&P 500", "%E-MINI S&P 500%", None),
+        ("S&P 500", "%S&P 500%", "%E-MINI%"),  # Esclude E-MINI
+        ("NASDAQ", "%NASDAQ-100%", None),
+        ("VIX", "%VIX FUTURES%", None),
+        ("GOLD", "%GOLD%", None),
+        ("SILVER", "%SILVER%", None),
     ]
     
     found = {}
-    for name, pattern in queries:
-        result = con.execute("""
-            SELECT DISTINCT contract_market_code, market_and_exchange 
-            FROM cot_disagg 
-            WHERE market_and_exchange LIKE ?
-            LIMIT 1
-        """, [pattern]).fetchone()
+    for query_item in queries:
+        name, pattern, exclude_pattern = query_item
+        
+        if exclude_pattern:
+            sql = """
+                SELECT DISTINCT contract_market_code, market_and_exchange 
+                FROM cot_disagg 
+                WHERE market_and_exchange LIKE ? 
+                  AND market_and_exchange NOT LIKE ?
+                ORDER BY market_and_exchange
+                LIMIT 1
+            """
+            result = con.execute(sql, [pattern, exclude_pattern]).fetchone()
+        else:
+            sql = """
+                SELECT DISTINCT contract_market_code, market_and_exchange 
+                FROM cot_disagg 
+                WHERE market_and_exchange LIKE ?
+                ORDER BY market_and_exchange
+                LIMIT 1
+            """
+            result = con.execute(sql, [pattern]).fetchone()
+        
         if result:
             found[name] = result[0]
     
