@@ -9,20 +9,32 @@ Esegui automaticamente lo script `scripts/cot/update_cot_pipeline.py` per scaric
 4. Fornisce summary delle operazioni
 
 **Cosa fare (in ordine):**
-1. Identifica il percorso workspace root (normalmente `C:\Users\a566269\Desktop\Cot Report`)
-2. Esegui il comando Python in modo diretto:
+1. Identifica il percorso workspace root: `C:\Users\a566269\Desktop\Cot_Report_MIC`
+2. **IMPORTANTE - Gestione directory:**
+   - Se già nella directory corretta, esegui direttamente il comando Python
+   - Se serve cambiare directory, fallo in un comando separato PRIMA
+   
+3. Esegui il comando Python in modo diretto:
    ```bash
    python scripts/cot/update_cot_pipeline.py
    ```
-   **ATTENZIONE - NON USARE:**
-   - ❌ `cd ... && python ...` (PowerShell non supporta `&&`)
-   - ❌ Comandi concatenati con `&&`
    
-   **USA SOLO:**
-   - ✅ `python scripts/cot/update_cot_pipeline.py` (comando singolo diretto)
-   - ✅ Se serve cambiare directory, fallo in un comando separato PRIMA
-3. Mostra TUTTO l'output generato esattamente come appare, senza modifiche o analisi aggiuntive
-4. Se ci sono errori, mostra il messaggio di errore completo
+   **❌ ERRORI COMUNI DA EVITARE (NON FUNZIONANO IN POWERSHELL):**
+   - ❌ `cd "C:\Users\a566269\Desktop\Cot_Report_MIC" && python scripts/cot/update_cot_pipeline.py`
+   - ❌ Qualsiasi comando concatenato con `&&` (PowerShell NON supporta `&&`)
+   - ❌ Comandi su più righe con `&&`
+   
+   **✅ FORMA CORRETTA:**
+   - ✅ Se nella directory: `python scripts/cot/update_cot_pipeline.py`
+   - ✅ Se serve cambiare directory:
+     ```bash
+     cd "C:\Users\a566269\Desktop\Cot_Report_MIC"
+     python scripts/cot/update_cot_pipeline.py
+     ```
+   - ✅ Usa SEMPRE comandi separati, NON concatenati con `&&`
+
+4. Mostra TUTTO l'output generato esattamente come appare, senza modifiche o analisi aggiuntive
+5. Se ci sono errori, mostra il messaggio di errore completo
 
 **IMPORTANTE:**
 - NON aggiungere osservazioni, interpretazioni o analisi personali
