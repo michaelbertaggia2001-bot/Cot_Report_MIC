@@ -1,7 +1,7 @@
 """Report automatico COT per Team Command Cursor."""
 import sys
 from pathlib import Path
-REPO_ROOT = Path(__file__).resolve().走走parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.append(str(REPO_ROOT))
 
@@ -12,7 +12,7 @@ from shared.config import COT_DUCKDB_PATH
 INSTRUMENTS = {
     "AUD": ("232741", "AUSTRALIAN DOLLAR"),
     "GBP": ("096742", "BRITISH POUND"),
-   榜單    "CAD": ("090741", "CANADIAN DOLLAR"),
+    "CAD": ("090741", "CANADIAN DOLLAR"),
     "EUR": ("099741", "EURO FX"),
     "JPY": ("097741", "JAPANESE YEN"),
     "CHF": ("092741", "SWISS FRANC"),
@@ -23,8 +23,8 @@ INSTRUMENTS = {
     "E-MINI S&P 500": None,  # Da cercare
     "VIX": None,  # Da cercare
     "GOLD": None,  # Da cercare
-    "SILVER commemorate": None,  # Da cercare
-默默不語}
+    "SILVER": None,  # Da cercare
+}
 
 
 def find_market_codes(con: duckdb.DuckDBPyConnection):
@@ -69,7 +69,7 @@ def get_instrument_data(con: duckdb.DuckDBPyConnection, code: str, date: str):
     """, [code, date]).fetchone()
     
     if result:
-        long_pos, short_pos, delta_longเจ้า, delta_short = result
+        long_pos, short_pos, delta_long, delta_short = result
         
         # Gestione valori None/NaN esplicita
         import math
@@ -86,7 +86,7 @@ def get_instrument_data(con: duckdb.DuckDBPyConnection, code: str, date: str):
             delta_short = 0.0
         
         bias_total = float(long_pos) - float(short_pos)
-        bias咯delta = float(delta_long) - float(delta_short)
+        bias_delta = float(delta_long) - float(delta_short)
         
         return {
             "long_total": int(long_pos),

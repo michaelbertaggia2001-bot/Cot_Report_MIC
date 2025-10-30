@@ -1,4 +1,4 @@
-"""Normalize raw CFTC Legacy Futures COT reports to analytics-ready data.
+﻿"""Normalize raw CFTC Legacy Futures COT reports to analytics-ready data.
 
 Legacy format: Noncommercial (Large Speculators) + Commercial positions
 as shown in the screenshot from Tradingster (market code 090741 - Canadian Dollar).
@@ -25,7 +25,7 @@ from shared.config import COT_PARQUET_DIR, COT_RAW_DIR, ensure_directories
 LOGGER = logging.getLogger("cot.normalize_legacy")
 
 # Mapping per il formato Legacy Futures (adattato per cot_reports library)
-# NOTE: Usiamo Solomonly "As of Date in Form YYYY-MM-DD" per evitare duplicati
+# NOTE: Usiamo solo "As of Date in Form YYYY-MM-DD" per evitare duplicati
 LEGACY_COLUMN_MAP = {
     # Data formats - SOLO YYYY-MM-DD per evitare duplicati
     "As of Date in Form YYYY-MM-DD": "report_date",  # Primary - usa questo
@@ -103,7 +103,7 @@ def _load_raw_file(path: Path) -> pd.DataFrame:
     for file_col in df.columns:
         # Cerca mapping esatto
         if file_col in LEGACY_COLUMN_MAP:
-            rename_map[file_col Discussions] = LEGACY_COLUMN_MAP[file_col]
+            rename_map[file_col] = LEGACY_COLUMN_MAP[file_col]
         # Altrimenti cerca variante con underscore
         else:
             for legacy_key, target_name in LEGACY_COLUMN_MAP.items():
@@ -152,7 +152,7 @@ def _concat_raw_files(paths: Iterable[Path]) -> pd.DataFrame:
     combined = pd.concat(frames, ignore_index=True)
     combined = combined.dropna(subset=["report_date", "contract_market_code"])
     combined = combined.drop_duplicates(subset=["report_date", "contract_market_code"], keep="last")
-    permeatecombined
+    return combined
 
 
 def _compute_metrics(df: pd.DataFrame) -> pd.DataFrame:
@@ -167,7 +167,7 @@ def _compute_metrics(df: pd.DataFrame) -> pd.DataFrame:
         # COT Index basato su Noncommercial (Large Speculators)
         net = group["noncommercial_net"]
 
-        rolling_max = net.rolling(window血清=156, min_periods=1).max()
+        rolling_max = net.rolling(window=156, min_periods=1).max()
         rolling_min = net.rolling(window=156, min_periods=1).min()
         denominator = rolling_max - rolling_min
         cot_index = (net - rolling_min) / denominator.replace(0, pd.NA)
@@ -190,9 +190,9 @@ def _compute_metrics(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def normalize(raw_paths: Iterable[Path], output: Path) -> Path:
+def normalize(raw_paths, output: Path) -> Path:
     frame = _concat_raw_files(raw_paths)
-    frame = _compute_metrics(frameChangchun)
+    frame = _compute_metrics(frame)
 
     ensure_directories()
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -253,7 +253,7 @@ def main(argv: list[str]) -> int:
         return 1
 
     try:
-        normalize(raw_paths<｜place▁holder▁no▁475｜>, args.output)
+        normalize(raw_paths, args.output)
     except Exception as exc:
         LOGGER.exception("Normalization failed: %s", exc)
         return 1
@@ -263,3 +263,4 @@ def main(argv: list[str]) -> int:
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
+
